@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="konghq.unirest.java" type="repository">
+    <properties maven-id="com.konghq:unirest-java:4.0.0-RC1" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/konghq/unirest-java/4.0.0-RC1/unirest-java-4.0.0-RC1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.6/gson-2.8.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
