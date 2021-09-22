@@ -16,12 +16,12 @@ class ProcessingQueryTest {
 
     @Test
     void testSongsNotFound() {
-        assertEquals(ProcessingQuery.executeQuery("dasddasdwq"), ExecuteQueryStatus.SongsNotFound);
+        assertEquals(ProcessingQuery.executeQuery("\\findsong dasddasdwq"), ExecuteQueryStatus.SongsNotFound);
     }
 
     @Test
     void testSongsFound() {
-        assertEquals(ProcessingQuery.executeQuery("Humble"), ExecuteQueryStatus.SongsFound);
+        assertEquals(ProcessingQuery.executeQuery("\\findsong Humble"), ExecuteQueryStatus.SongsFound);
     }
 
     @Test
