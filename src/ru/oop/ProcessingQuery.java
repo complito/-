@@ -2,7 +2,7 @@ package ru.oop;
 
 import java.util.List;
 
-enum ExecuteQueryStatus {
+enum    ExecuteQueryStatus {
     QueryIsEmpty,
     HelpMessage,
     SongsNotFound,
