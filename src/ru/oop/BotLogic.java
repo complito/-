@@ -38,15 +38,15 @@ class Song {
 
 public class BotLogic {
 
-    public static String startMessage() {
+    public String startMessage() {
         return "Привет, я бот который умеет находить песню по отрывку ее текста. Если нужна помощь, напиши \\help";
     }
 
-    public static String helpMessage() {
+    public String helpMessage() {
         return "\\findsong - Поиск песни по отрывку текста";
     }
 
-    public static List<Song> findSongs(String songLyrics) { // Возвращает список найденых песен
+    public List<Song> findSongs(String songLyrics) { // Возвращает список найденых песен
         List<Song> foundSongs = new ArrayList<>();
         HttpResponse<JsonNode> httpResponse = Unirest.get("https://api.genius.com/search?q=" + songLyrics)
                 .header("Authorization","Bearer JWHWXT3wkETpLyNmqq9YXl6V3Ftbgk1D1cRCJz60edII4BNQHLEmhRhs8KKkNqxf")
