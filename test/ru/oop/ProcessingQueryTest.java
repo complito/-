@@ -3,29 +3,32 @@ package ru.oop;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ProcessingQueryTest {
+class BotIORequestTest {
+    BotIO botIO = new BotIO();
+
     @Test
-    void testEmptyQuery() {
-        assertEquals(ProcessingQuery.executeQuery(""), ExecuteQueryStatus.QueryIsEmpty);
+    void testEmptyRequest() {
+        assertEquals(botIO.Request(""), new String[] {"Ошибка: запрос пустой"});
     }
 
     @Test
     void testHelpMessage() {
-        assertEquals(ProcessingQuery.executeQuery("\\help"), ExecuteQueryStatus.HelpMessage);
+        assertEquals(botIO.Request("\\help"), new String[] {"Привет, я бот который умеет находить песню по отрывку ее текста. Если нужна помощь, напиши \\help"});
     }
 
     @Test
     void testSongsNotFound() {
-        assertEquals(ProcessingQuery.executeQuery("\\findsong dasddasdwq"), ExecuteQueryStatus.SongsNotFound);
+        assertEquals(botIO.Request("\\findsong dasddasdwq"), new String[] {"По введённому запросу не было найдено песен"});
     }
 
     @Test
     void testSongsFound() {
-        assertEquals(ProcessingQuery.executeQuery("\\findsong Humble"), ExecuteQueryStatus.SongsFound);
+        String[] botRequest = botIO.Request("\\findsong Humble");
+        assertEquals(botRequest[0], "Список найденных песен:");
     }
 
     @Test
-    void testUnknownQuery() {
-        assertEquals(ProcessingQuery.executeQuery("sda"), ExecuteQueryStatus.UnknownQuery);
+    void testUnknownRequest() {
+        assertEquals(botIO.Request("sda"), new String[] {"Ошибка: неизвестный запрос"});
     }
 }

@@ -4,13 +4,16 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        BotLogic bot = new BotLogic();
         Scanner input = new Scanner(System.in);
-        System.out.println(bot.startMessage());
+        BotLogic botLogic = new BotLogic();
+        BotIO botIO = new BotIO();
+
+        botIO.Response(botLogic.startMessage());
         while (true) {
-            System.out.print("Введите запрос: ");
+            botIO.Response("Введите запрос: ");
             String query = input.nextLine();
-            ProcessingQuery.executeQuery(query);
+            for (String request : botIO.Request(query))
+                botIO.Response(request);
         }
     }
 }

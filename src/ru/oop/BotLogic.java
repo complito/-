@@ -37,7 +37,6 @@ class Song {
 }
 
 public class BotLogic {
-
     public String startMessage() {
         return "Привет, я бот который умеет находить песню по отрывку ее текста. Если нужна помощь, напиши \\help";
     }
