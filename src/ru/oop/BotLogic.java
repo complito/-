@@ -10,15 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BotLogic {
-    public String startMessage() {
-        return "Привет, я бот который умеет находить песню по отрывку ее текста. Если нужна помощь, напиши \\help";
+    public Response startMessage() {
+        return new Response("Привет, я бот который умеет находить песню по отрывку ее текста. Если нужна помощь, напиши \\help\nВведите запрос: \n");
     }
 
-    public String helpMessage() {
-        return "\\findsong - Поиск песни по отрывку текста";
+    public Response helpMessage() {
+        return new Response("\\findsong - Поиск песни по отрывку текста");
     }
 
-    public List<Song> findSongs(String songLyrics) { // Возвращает список найденых песен
+    public Response findSongs(String songLyrics) { // Возвращает список найденых песен
         List<Song> foundSongs = new ArrayList<>();
         HttpResponse<JsonNode> httpResponse = Unirest.get("https://api.genius.com/search?q=" + songLyrics)
                 .header("Authorization","Bearer JWHWXT3wkETpLyNmqq9YXl6V3Ftbgk1D1cRCJz60edII4BNQHLEmhRhs8KKkNqxf")
@@ -29,13 +29,13 @@ public class BotLogic {
             for (int i = 0; i < searchResults.length(); i++) {
                 String apiPath = searchResults.getJSONObject(i).getJSONObject("result").getString("api_path");
                 String fullTitle = searchResults.getJSONObject(i).getJSONObject("result").getString("full_title")
-                        .replace("\u00a0"," ");
+                        .replace("\u00a0", " ");
                 String primaryArtistApiPath = searchResults.getJSONObject(i).getJSONObject("result")
                         .getJSONObject("primary_artist").getString("api_path");
                 Song foundSong = new Song(apiPath, fullTitle, primaryArtistApiPath);
                 foundSongs.add(foundSong);
             }
         }
-        return foundSongs;
+        return new Response(foundSongs);
     }
 }

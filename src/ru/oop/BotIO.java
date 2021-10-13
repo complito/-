@@ -4,29 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BotIO {
-    public void Response(String BotResponse) {
-        System.out.println(BotResponse);
+    public void PrintResponse(Response botResponse) {
+        System.out.println(botResponse.responseString);
+
     }
 
-    public String[] Request(String request) {
+    public Response Request(String request) {
         BotLogic botLogic = new BotLogic();
         if (request.equals(""))
-            return new String[] {"Ошибка: запрос пустой"};
+            return new Response("Ошибка: запрос пустой");
         else if (request.equals("\\help"))
-            return new String[] {botLogic.helpMessage()};
+            return botLogic.helpMessage();
         else if (request.length() > 10 && request.startsWith("\\findsong")) {
-            List<Song> songs = botLogic.findSongs(request.substring(10));
+            List<Song> songs = botLogic.findSongs(request.substring(10)).responseList;
             if (songs.isEmpty())
-                return new String[] {"По введённому запросу не было найдено песен"};
+                return new Response("По введённому запросу не было найдено песен");
             else {
-                List<String> botRequest = new ArrayList<>();
-                botRequest.add("Список найденных песен:");
-                for (Song song : songs) botRequest.add(song.fullTitle);
-                String[] botRequestInArray = new String[botRequest.size()];
-                botRequestInArray = botRequest.toArray(botRequestInArray);
-                return botRequestInArray;
+                Response resp = new Response(songs);
+                resp.SongListToStr();
+                return resp;
             }
         }
-        else return new String[] {"Ошибка: неизвестный запрос"};
+        else {
+            return new Response("Ошибка: неизвестный запрос");
+        }
     }
 }
