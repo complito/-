@@ -10,8 +10,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BotLogic {
+    public Response requestHandler(String request) {
+        if (request.equals("")) {
+            return new Response("Ошибка: запрос пустой");
+        } else if (request.equals("\\help")) {
+            return helpMessage();
+        } else if (request.length() > 10 && request.startsWith("\\findsong")) {
+            List<Song> songs = findSongs(request.substring(10)).getResponseList();
+            if (songs.isEmpty()) {
+                return new Response("По введённому запросу не было найдено песен");
+            } else {
+                Response resp = new Response(songs);
+                resp.songListToStr();
+                return resp;
+            }
+        } else {
+            return new Response("Ошибка: неизвестный запрос");
+        }
+    }
+
     public Response startMessage() {
-        return new Response("Привет, я бот который умеет находить песню по отрывку ее текста. Если нужна помощь, напиши \\help\nВведите запрос: \n");
+        return new Response("""
+                Привет, я бот который умеет находить песню по отрывку ее текста. Если нужна помощь, напиши \\help
+                Введите запрос:\s
+                """);
     }
 
     public Response helpMessage() {

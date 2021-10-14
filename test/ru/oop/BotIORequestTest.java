@@ -8,27 +8,29 @@ class BotIORequestTest {
 
     @Test
     void testEmptyRequest() {
-        assertEquals(botIO.Request("").responseString, "Ошибка: запрос пустой");
+        assertEquals(botIO.sendRequest("").getResponseString(), "Ошибка: запрос пустой");
     }
 
     @Test
     void testHelpMessage() {
-        assertEquals(botIO.Request("\\help").responseString, "\\findsong - Поиск песни по отрывку текста");
+        assertEquals(botIO.sendRequest("\\help").getResponseString(),
+                "\\findsong - Поиск песни по отрывку текста");
     }
 
     @Test
     void testSongsNotFound() {
-        assertEquals(botIO.Request("\\findsong dasddasdwq").responseString, "По введённому запросу не было найдено песен");
+        assertEquals(botIO.sendRequest("\\findsong dasddasdwq").getResponseString(),
+                "По введённому запросу не было найдено песен");
     }
 
     @Test
     void testSongsFound() {
-        Response botResponse = botIO.Request("\\findsong Humble");
-        assertTrue(botResponse.responseString.startsWith("Список найденных песен:"));
+        Response botResponse = botIO.sendRequest("\\findsong Humble");
+        assertTrue(botResponse.getResponseString().startsWith("Список найденных песен:"));
     }
 
     @Test
     void testUnknownRequest() {
-        assertEquals(botIO.Request("sda").responseString, "Ошибка: неизвестный запрос");
+        assertEquals(botIO.sendRequest("sda").getResponseString(), "Ошибка: неизвестный запрос");
     }
 }
