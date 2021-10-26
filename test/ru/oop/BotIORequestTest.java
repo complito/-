@@ -13,19 +13,19 @@ class BotIORequestTest {
 
     @Test
     void testHelpMessage() {
-        assertEquals(botIO.sendRequest("\\help").getResponseString(),
-                "\\findsong - Поиск песни по отрывку текста");
+        assertEquals(botIO.sendRequest("/help").getResponseString(),
+                "/findsong - Поиск песни по отрывку текста");
     }
 
     @Test
     void testSongsNotFound() {
-        assertEquals(botIO.sendRequest("\\findsong dasddasdwq").getResponseString(),
+        assertEquals(botIO.sendRequest("/findsong dasddasdwq").getResponseString(),
                 "По введённому запросу не было найдено песен");
     }
 
     @Test
     void testSongsFound() {
-        Response botResponse = botIO.sendRequest("\\findsong Humble");
+        Response botResponse = botIO.sendRequest("/findsong Humble");
         assertTrue(botResponse.getResponseString().startsWith("Список найденных песен:"));
     }
 

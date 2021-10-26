@@ -13,9 +13,11 @@ public class BotLogic {
     public Response requestHandler(String request) {
         if (request.equals("")) {
             return new Response("Ошибка: запрос пустой");
-        } else if (request.equals("\\help")) {
+        } else if (request.equals("/help")) {
             return helpMessage();
-        } else if (request.length() > 10 && request.startsWith("\\findsong")) {
+        } else if (request.equals("/start")) {
+            return startMessage();
+        } else if (request.length() > 10 && request.startsWith("/findsong")) {
             List<Song> songs = findSongs(request.substring(10)).getResponseList();
             if (songs.isEmpty()) {
                 return new Response("По введённому запросу не было найдено песен");
@@ -31,13 +33,13 @@ public class BotLogic {
 
     public Response startMessage() {
         return new Response("""
-                Привет, я бот который умеет находить песню по отрывку ее текста. Если нужна помощь, напиши \\help
+                Привет, я бот который умеет находить песню по отрывку ее текста. Если нужна помощь, напиши /help
                 Введите запрос:\s
                 """);
     }
 
     public Response helpMessage() {
-        return new Response("\\findsong - Поиск песни по отрывку текста");
+        return new Response("/findsong - Поиск песни по отрывку текста");
     }
 
     public Response findSongs(String songLyrics) { // Возвращает список найденых песен
