@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class BotIO extends TelegramLongPollingBot {
     public void printResponse(Response botResponse) {
         System.out.println(botResponse.getResponseString());
-
     }
 
     public Response sendRequest(String query) {
