@@ -6,15 +6,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class BotIO extends TelegramLongPollingBot {
-    public void printResponse(Response botResponse) {
-        System.out.println(botResponse.getResponseString());
-    }
-
-    public Response sendRequest(String query) {
-        BotLogic botLogic = new BotLogic();
-        return botLogic.requestHandler(query);
-    }
-
     @Override
     public String getBotToken() {
         return "2081242476:AAHWlLdicsAyw_04JNXQOoAcpqBi0OnPC2w";
