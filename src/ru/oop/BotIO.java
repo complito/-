@@ -4,11 +4,26 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
 
 public class BotIO extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
-        return "2081242476:AAHWlLdicsAyw_04JNXQOoAcpqBi0OnPC2w";
+        FileReader reader;
+        Properties properties = new Properties();
+        try {
+            reader = new FileReader("resources/config.properties");
+            properties.load(reader);
+            String botToken = properties.getProperty("botToken");
+            reader.close();
+            return botToken;
+        }
+        catch (IOException e) {
+            System.out.println("Ошибка: файл свойств отсутствует");
+        }
+        return null;
     }
 
     @Override
