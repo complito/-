@@ -6,10 +6,29 @@ import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class BotLogic {
+    String GENIUSTOKEN = getGeniusToken();
+    private String getGeniusToken() {
+        FileReader reader;
+        Properties properties = new Properties();
+        try {
+            reader = new FileReader("resources/config.properties");
+            properties.load(reader);
+            String geniusToken = properties.getProperty("geniusToken");
+            reader.close();
+            return geniusToken;
+        }
+        catch (IOException e) {
+            System.out.println("Ошибка: файл свойств отсутствует");
+            return "";
+        }
+    }
     public Response requestHandler(String request) {
         if (request.equals("")) {
             return new Response("Ошибка: запрос пустой");
@@ -42,10 +61,10 @@ public class BotLogic {
         return new Response("/findsong - Поиск песни по отрывку текста");
     }
 
-    public Response findSongs(String songLyrics) { // Возвращает список найденых песен
+    public Response findSongs(String songLyrics) {
         List<Song> foundSongs = new ArrayList<>();
         HttpResponse<JsonNode> httpResponse = Unirest.get("https://api.genius.com/search?q=" + songLyrics)
-                .header("Authorization","Bearer JWHWXT3wkETpLyNmqq9YXl6V3Ftbgk1D1cRCJz60edII4BNQHLEmhRhs8KKkNqxf")
+                .header("Authorization","Bearer " + GENIUSTOKEN)
                 .asJson();
         JSONObject parsedHttpResponse = httpResponse.getBody().getObject();
         if (parsedHttpResponse.getJSONObject("meta").getString("status").equals("200")) {
