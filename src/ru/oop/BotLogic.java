@@ -14,6 +14,8 @@ import java.util.Properties;
 
 public class BotLogic {
     String GENIUSTOKEN = getGeniusToken();
+    Numbers numbers = new Numbers();
+
     private String getGeniusToken() {
         FileReader reader;
         Properties properties = new Properties();
@@ -25,8 +27,8 @@ public class BotLogic {
             return geniusToken;
         }
         catch (IOException e) {
-            System.out.println("Ошибка: файл свойств отсутствует");
-            return "";
+            e.printStackTrace();
+            return null;
         }
     }
     public Response requestHandler(String request) {
@@ -45,7 +47,11 @@ public class BotLogic {
                 resp.songListToStr();
                 return resp;
             }
-        } else {
+        } else if (numbers.isNumber(request.charAt(0)) && ((request.length() == 3 && request.charAt(1) == ' ' && numbers.is1or2(request.charAt(2))) ||
+                (request.length() == 4 && numbers.isNumber(request.charAt(1)) && request.charAt(2) == ' ' && numbers.is1or2(request.charAt(3))))) {
+            return new Response("...");
+        }
+        else {
             return new Response("Ошибка: неизвестный запрос");
         }
     }
@@ -75,7 +81,7 @@ public class BotLogic {
                         .replace("\u00a0", " ");
                 String primaryArtistApiPath = searchResults.getJSONObject(i).getJSONObject("result")
                         .getJSONObject("primary_artist").getString("api_path");
-                Song foundSong = new Song(apiPath, fullTitle, primaryArtistApiPath);
+                Song foundSong = new Song(apiPath, i + 1 + ") " + fullTitle, primaryArtistApiPath);
                 foundSongs.add(foundSong);
             }
         }

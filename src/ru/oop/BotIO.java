@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class BotIO extends TelegramLongPollingBot {
+    BotLogic botLogic = new BotLogic();
+
     @Override
     public String getBotToken() {
         FileReader reader;
@@ -21,15 +23,14 @@ public class BotIO extends TelegramLongPollingBot {
             return botToken;
         }
         catch (IOException e) {
-            System.out.println("Ошибка: файл свойств отсутствует");
+            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
-            BotLogic botLogic = new BotLogic();
             Response botResponse = botLogic.requestHandler(update.getMessage().getText());
             SendMessage message = new SendMessage();
             message.setChatId(update.getMessage().getChatId().toString());

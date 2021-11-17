@@ -31,10 +31,12 @@ public class Response {
     }
 
     public void songListToStr() {
-        responseString = "";
-        responseString += "Список найденных песен:\n";
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Список найденных песен:\n");
         for (Song song : responseList) {
-            responseString += song.getFullTitle() + "\n";
+            stringBuilder.append(song.getFullTitle()).append("\n");
         }
+        stringBuilder.append("\nВведите номер песни и через пробел 1 или 2\n1 - текст песни\n2 - информация о песни");
+        responseString = stringBuilder.toString();
     }
 }
