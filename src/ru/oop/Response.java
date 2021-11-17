@@ -31,12 +31,10 @@ public class Response {
     }
 
     public void songListToStr() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Список найденных песен:\n");
-        for (Song song : responseList) {
-            stringBuilder.append(song.getFullTitle()).append("\n");
+        responseString = "Список найденных песен:\n";
+        for (int i = 0; i < responseList.size(); i++) {
+            responseString += i + ") " + responseList.get(i).getFullTitle() + "\n";
         }
-        stringBuilder.append("\nВведите номер песни и через пробел 1 или 2\n1 - текст песни\n2 - информация о песни");
-        responseString = stringBuilder.toString();
+        responseString += "Введите номер песни и через пробел 1 или 2\n1 - текст песни\n2 - информация о песни";
     }
 }

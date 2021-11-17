@@ -81,7 +81,7 @@ public class BotLogic {
                         .replace("\u00a0", " ");
                 String primaryArtistApiPath = searchResults.getJSONObject(i).getJSONObject("result")
                         .getJSONObject("primary_artist").getString("api_path");
-                Song foundSong = new Song(apiPath, i + 1 + ") " + fullTitle, primaryArtistApiPath);
+                Song foundSong = new Song(apiPath, fullTitle, primaryArtistApiPath);
                 foundSongs.add(foundSong);
             }
         }
