@@ -12,7 +12,7 @@ class BotLogicTest {
         Song foundSong = botLogic.findSongs("Humble").getResponseList().get(0);
         Song testSong = new Song("/songs/3039923",
                 "HUMBLE. by Kendrick Lamar",
-                "/artists/1421");
+                "/artists/1421", "/Kendrick-lamar-humble-lyrics");
         assertEquals(testSong, foundSong);
     }
     @Test

@@ -4,6 +4,7 @@ public class Song {
     private String apiPath;
     private String fullTitle;
     private String primaryArtistApiPath;
+    private String lyricsPath;
 
     public String getApiPath() {
         return this.apiPath;
@@ -15,6 +16,14 @@ public class Song {
 
     public String getPrimaryArtistApiPath() {
         return this.primaryArtistApiPath;
+    }
+
+    public String getLyricsPath() {
+        return this.lyricsPath;
+    }
+
+    public void setLyricsPath(String lyricsPath) {
+        this.lyricsPath = lyricsPath;
     }
 
     public void setApiPath(String apiPath) {
@@ -29,10 +38,11 @@ public class Song {
         this.primaryArtistApiPath = primaryArtistApiPath;
     }
 
-    public Song(String apiPath, String fullTitle, String primaryArtistApiPath) {
+    public Song(String apiPath, String fullTitle, String primaryArtistApiPath, String lyricsPath) {
         this.apiPath = apiPath;
         this.fullTitle = fullTitle;
         this.primaryArtistApiPath = primaryArtistApiPath;
+        this.lyricsPath = lyricsPath;
     }
 
     Song() {
@@ -50,6 +60,7 @@ public class Song {
         Song song = (Song) obj;
         return apiPath.equals(song.apiPath)
                 && fullTitle.equals(song.fullTitle)
-                && primaryArtistApiPath.equals(song.primaryArtistApiPath);
+                && primaryArtistApiPath.equals(song.primaryArtistApiPath)
+                && lyricsPath.equals(song.lyricsPath);
     }
 }

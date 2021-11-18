@@ -31,10 +31,9 @@ public class Response {
     }
 
     public void songListToStr() {
-        responseString = "Список найденных песен:\n";
-        for (int i = 0; i < responseList.size(); i++) {
-            responseString += i + ") " + responseList.get(i).getFullTitle() + "\n";
+        responseString = "Список найденных песен:\nПесня (номер)\n";
+        for (Song song : responseList) {
+            responseString += song.getFullTitle() + " (" + song.getApiPath().substring(7) + ")\n";
         }
-        responseString += "Введите номер песни и через пробел 1 или 2\n1 - текст песни\n2 - информация о песни";
     }
 }

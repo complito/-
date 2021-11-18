@@ -12,9 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.safety.Cleaner;
+import org.jsoup.safety.Safelist;
+import org.jsoup.select.Elements;
+
 public class BotLogic {
     String GENIUSTOKEN = getGeniusToken();
-    Numbers numbers = new Numbers();
 
     private String getGeniusToken() {
         FileReader reader;
@@ -38,6 +44,8 @@ public class BotLogic {
             return helpMessage();
         } else if (request.equals("/start")) {
             return startMessage();
+        } else if (request.length() > 16 && request.startsWith("/findsonglyrics")) {
+                return findSongLyrics(request.substring(16));
         } else if (request.length() > 10 && request.startsWith("/findsong")) {
             List<Song> songs = findSongs(request.substring(10)).getResponseList();
             if (songs.isEmpty()) {
@@ -47,11 +55,7 @@ public class BotLogic {
                 resp.songListToStr();
                 return resp;
             }
-        } else if (numbers.isNumber(request.charAt(0)) && ((request.length() == 3 && request.charAt(1) == ' ' && numbers.is1or2(request.charAt(2))) ||
-                (request.length() == 4 && numbers.isNumber(request.charAt(1)) && request.charAt(2) == ' ' && numbers.is1or2(request.charAt(3))))) {
-            return new Response("...");
-        }
-        else {
+        } else {
             return new Response("Ошибка: неизвестный запрос");
         }
     }
@@ -81,10 +85,39 @@ public class BotLogic {
                         .replace("\u00a0", " ");
                 String primaryArtistApiPath = searchResults.getJSONObject(i).getJSONObject("result")
                         .getJSONObject("primary_artist").getString("api_path");
-                Song foundSong = new Song(apiPath, fullTitle, primaryArtistApiPath);
+                String lyricsPath = searchResults.getJSONObject(i).getJSONObject("result").getString("path");
+                Song foundSong = new Song(apiPath, fullTitle, primaryArtistApiPath, lyricsPath);
                 foundSongs.add(foundSong);
             }
         }
         return new Response(foundSongs);
+    }
+
+    public Response findSongLyrics(String songId) {
+        HttpResponse<JsonNode> httpResponse = Unirest.get("https://api.genius.com/songs/" + songId)
+                .header("Authorization","Bearer " + GENIUSTOKEN).asJson();
+        JSONObject parsedHttpResponse = httpResponse.getBody().getObject();
+        if (parsedHttpResponse.getJSONObject("meta").getString("status").equals("200")) {
+            String searchResult = parsedHttpResponse.getJSONObject("response").getJSONObject("song")
+                    .getString("path");
+            try {
+                Document doc = Jsoup.connect("https://genius.com" + searchResult).get();
+                Elements listLyrics = doc.select("div.song_body-lyrics").select("div.lyrics").select("p");
+                for (Element element: listLyrics) {
+                    Safelist mySafelist = new Safelist();
+                    mySafelist.addTags("br");
+                    Cleaner cleaner = new Cleaner(mySafelist);
+                    Document dirty = Jsoup.parse(element.toString());
+                    Document clean = cleaner.clean(dirty);
+                    return new Response(clean.toString().replace("<html>", "")
+                            .replace("</html>", "").replace("<head>", "")
+                            .replace("</head>", "").replace("<body>", "")
+                            .replace("</body>", "").replace("<br>", "").trim());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }
