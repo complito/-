@@ -101,18 +101,20 @@ public class BotLogic {
             String searchResult = parsedHttpResponse.getJSONObject("response").getJSONObject("song")
                     .getString("path");
             try {
-                Document doc = Jsoup.connect("https://genius.com" + searchResult).get();
-                Elements listLyrics = doc.select("div.song_body-lyrics").select("div.lyrics").select("p");
-                for (Element element: listLyrics) {
-                    Safelist mySafelist = new Safelist();
-                    mySafelist.addTags("br");
-                    Cleaner cleaner = new Cleaner(mySafelist);
-                    Document dirty = Jsoup.parse(element.toString());
-                    Document clean = cleaner.clean(dirty);
-                    return new Response(clean.toString().replace("<html>", "")
+                while (true){
+                    Document doc = Jsoup.connect("https://genius.com" + searchResult).get();
+                    Elements listLyrics = doc.select("div.song_body-lyrics").select("div.lyrics").select("p");
+                    for (Element element: listLyrics) {
+                        Safelist mySafelist = new Safelist();
+                        mySafelist.addTags("br");
+                        Cleaner cleaner = new Cleaner(mySafelist);
+                        Document dirty = Jsoup.parse(element.toString());
+                        Document clean = cleaner.clean(dirty);
+                        return new Response(clean.toString().replace("<html>", "")
                             .replace("</html>", "").replace("<head>", "")
                             .replace("</head>", "").replace("<body>", "")
                             .replace("</body>", "").replace("<br>", "").trim());
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
