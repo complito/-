@@ -45,7 +45,9 @@ public class BotLogic {
         } else if (request.equals("/start")) {
             return startMessage();
         } else if (request.length() > 16 && request.startsWith("/findsonglyrics")) {
-                return findSongLyrics(request.substring(16));
+            return findSongLyrics(request.substring(16));
+        }else if (request.length() > 16 && request.startsWith("/findsonginfo")) {
+                return findSongInfo(request.substring(14));
         } else if (request.length() > 10 && request.startsWith("/findsong ")) {
             List<Song> songs = findSongs(request.substring(10)).getResponseList();
             if (songs.isEmpty()) {
@@ -68,7 +70,8 @@ public class BotLogic {
     }
 
     public Response helpMessage() {
-        return new Response("/findsong - Поиск песни по отрывку текста\n/findsonglyrics - Поиск текста песни по её номеру");
+        return new Response("/findsong - Поиск песни по отрывку текста\n" +
+                "/findsonglyrics - Поиск текста песни по её номеру");
     }
 
     public Response findSongs(String songLyrics) {
@@ -119,6 +122,24 @@ public class BotLogic {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        return null;
+    }
+    public Response findSongInfo(String songId) {
+        HttpResponse<JsonNode> httpResponse = Unirest.get("https://api.genius.com/songs/" + songId)
+                .header("Authorization","Bearer " + GENIUSTOKEN).asJson();
+        JSONObject parsedHttpResponse = httpResponse.getBody().getObject();
+        if (parsedHttpResponse.getJSONObject("meta").getString("status").equals("200")) {
+            String fullTitle = parsedHttpResponse.getJSONObject("response").getJSONObject("song")
+                    .getString("full_title").replace("\u00a0", " ");
+            String releaseDate = parsedHttpResponse.getJSONObject("response").getJSONObject("song")
+                    .getString("release_date_for_display").replace("\u00a0", " ");
+            String pageViews = parsedHttpResponse.getJSONObject("response").getJSONObject("song").getJSONObject("stats")
+                    .getString("pageviews");
+            String albumName = parsedHttpResponse.getJSONObject("response").getJSONObject("song").getJSONObject("album")
+                    .getString("name");
+            return new Response("Полное название: " + fullTitle + "\n" + "Дата выхода: " + releaseDate
+                    + "\n" + "Количество просмотров песни: " + pageViews + "\n" + "Альбом: " + albumName);
         }
         return null;
     }
