@@ -24,8 +24,8 @@ class BotLogicTest {
 
     @Test
     void testHelpMessage() {
-        assertEquals(botLogic.requestHandler("/help").getResponseString(),
-                "/findsong - Поиск песни по отрывку текста");
+        assertTrue(botLogic.requestHandler("/help").getResponseString()
+                .startsWith("/findsong - Поиск песни по отрывку текста"));
     }
 
     @Test
@@ -36,8 +36,8 @@ class BotLogicTest {
 
     @Test
     void testSongsFound() {
-        Response botResponse = botLogic.requestHandler("/findsong Humble");
-        assertTrue(botResponse.getResponseString().startsWith("Список найденных песен:"));
+        assertTrue(botLogic.requestHandler("/findsong Humble").getResponseString()
+                .startsWith("Список найденных песен:"));
     }
 
     @Test
