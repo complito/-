@@ -2,6 +2,8 @@ package ru.oop;
 
 import org.junit.jupiter.api.Test;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BotLogicTest {
@@ -41,5 +43,11 @@ class BotLogicTest {
     @Test
     void testUnknownRequest() {
         assertEquals(botLogic.requestHandler("sda").getResponseString(), "Ошибка: неизвестный запрос");
+    }
+
+    @Test
+    void testFindLyrics() {
+        assertTrue(botLogic.requestHandler("/findsonglyrics 3039923").getResponseString().startsWith("[Intro]\n" +
+                "   Nobody pray for me"));
     }
 }
