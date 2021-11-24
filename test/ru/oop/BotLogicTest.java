@@ -46,8 +46,14 @@ class BotLogicTest {
     }
 
     @Test
-    void testFindLyrics() {
+    void testFindSongLyrics() {
         assertTrue(botLogic.requestHandler("/findsonglyrics 3039923").getResponseString().startsWith("[Intro]\n" +
                 "   Nobody pray for me"));
+    }
+
+    @Test
+    void testFindSongInfo() {
+        assertTrue(botLogic.requestHandler("/findsonginfo 3039923").getResponseString()
+                .startsWith("Полное название: HUMBLE. by Kendrick Lamar"));
     }
 }
