@@ -46,7 +46,7 @@ public class BotLogic {
             return startMessage();
         } else if (request.length() > 16 && request.startsWith("/findsonglyrics")) {
             return findSongLyrics(request.substring(16));
-        }else if (request.length() > 16 && request.startsWith("/findsonginfo")) {
+        } else if (request.length() > 14 && request.startsWith("/findsonginfo")) {
                 return findSongInfo(request.substring(14));
         } else if (request.length() > 10 && request.startsWith("/findsong ")) {
             List<Song> songs = findSongs(request.substring(10)).getResponseList();
@@ -70,8 +70,10 @@ public class BotLogic {
     }
 
     public Response helpMessage() {
-        return new Response("/findsong - Поиск песни по отрывку текста\n" +
-                "/findsonglyrics - Поиск текста песни по её номеру");
+        return new Response("""
+                /findsong - Поиск песни по отрывку текста
+                /findsonglyrics - Поиск текста песни по её номеру
+                /findsonginfo - Поиск информации песни по её номеру""");
     }
 
     public Response findSongs(String songLyrics) {
