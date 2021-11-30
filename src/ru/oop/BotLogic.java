@@ -23,7 +23,6 @@ public class BotLogic {
     String GENIUSTOKEN = getGeniusToken();
 
     private String getGeniusToken() {
-        /* for config.properties
         FileReader reader;
         Properties properties = new Properties();
         try {
@@ -37,9 +36,6 @@ public class BotLogic {
             e.printStackTrace();
             return null;
         }
-        */
-        // for environment variable
-        return System.getenv("geniusToken");
     }
     public Response requestHandler(String request) {
         if (request.equals("")) {
