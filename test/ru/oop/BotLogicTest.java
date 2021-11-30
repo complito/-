@@ -2,8 +2,6 @@ package ru.oop;
 
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.concurrent.ThreadSafe;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class BotLogicTest {
@@ -11,7 +9,7 @@ class BotLogicTest {
 
     @Test
     void testCorrectFindSongs() {
-        Song foundSong = botLogic.findSongs("Humble").getResponseList().get(0);
+        Song foundSong = botLogic.findSongs("Humble").getSongList().get(0);
         Song testSong = new Song("/songs/3039923",
                 "HUMBLE. by Kendrick Lamar",
                 "/artists/1421", "/Kendrick-lamar-humble-lyrics");
@@ -25,7 +23,7 @@ class BotLogicTest {
     @Test
     void testHelpMessage() {
         assertTrue(botLogic.requestHandler("/help").getResponseString()
-                .startsWith("/findsong - Поиск песни по отрывку текста"));
+                .startsWith("/findsong ТЕКСТ - Поиск песни по отрывку текста"));
     }
 
     @Test
@@ -38,6 +36,18 @@ class BotLogicTest {
     void testSongsFound() {
         assertTrue(botLogic.requestHandler("/findsong Humble").getResponseString()
                 .startsWith("Список найденных песен:"));
+    }
+
+    @Test
+    void testArtistSongsFound() {
+        assertTrue(botLogic.requestHandler("/findartistsongs 1421").getResponseString()
+                .startsWith("Список найденных песен:"));
+    }
+
+    @Test
+    void testArtistsFound() {
+        assertTrue(botLogic.requestHandler("/findartists Kendrick Lamar").getResponseString()
+                .startsWith("Список найденных артистов:"));
     }
 
     @Test

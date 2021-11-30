@@ -47,9 +47,23 @@ public class BotLogic {
         } else if (request.length() > 16 && request.startsWith("/findsonglyrics")) {
             return findSongLyrics(request.substring(16));
         } else if (request.length() > 14 && request.startsWith("/findsonginfo")) {
-                return findSongInfo(request.substring(14));
-        } else if (request.length() > 10 && request.startsWith("/findsong ")) {
-            List<Song> songs = findSongs(request.substring(10)).getResponseList();
+            return findSongInfo(request.substring(14));
+        } else if (request.length() > 13 && request.startsWith("/findartists ")) {
+            List<Artist> artists = findArtists(request.substring(13)).getArtistList();
+            if (artists.isEmpty()) {
+                return new Response("По введённому запросу не было найдено артистов");
+            } else {
+                Response resp = new Response();
+                resp.setArtistList(artists);
+                resp.artistListToStr();
+                return resp;
+            }
+        } else if ((request.length() > 10 && request.startsWith("/findsong ")) ||
+                (request.length() > 17 && request.startsWith("/findartistsongs"))) {
+            List<Song> songs;
+            if (request.startsWith("/findsong "))
+                songs = findSongs(request.substring(10)).getSongList();
+            else songs = findArtistSongs(request.substring(17)).getSongList();
             if (songs.isEmpty()) {
                 return new Response("По введённому запросу не было найдено песен");
             } else {
@@ -71,9 +85,11 @@ public class BotLogic {
 
     public Response helpMessage() {
         return new Response("""
-                /findsong - Поиск песни по отрывку текста
-                /findsonglyrics - Поиск текста песни по её номеру
-                /findsonginfo - Поиск информации песни по её номеру""");
+                /findsong ТЕКСТ - Поиск песни по отрывку текста
+                /findsonglyrics НОМЕР - Поиск текста песни по её номеру
+                /findsonginfo НОМЕР - Поиск информации песни по её номеру
+                /findartists ИМЯ - Поиск артистов по введёному имени
+                /findartistsongs НОМЕР - Поиск песен артиста по его номеру""");
     }
 
     public Response findSongs(String songLyrics) {
@@ -96,6 +112,56 @@ public class BotLogic {
             }
         }
         return new Response(foundSongs);
+    }
+
+    public Response findArtistSongs(String artistId) {
+        List<Song> foundArtistSongs = new ArrayList<>();
+        HttpResponse<JsonNode> httpResponse = Unirest.get(
+                "https://api.genius.com/artists/" + artistId + "/songs?sort=popularity&per_page=10")
+                .header("Authorization","Bearer " + GENIUSTOKEN)
+                .asJson();
+        JSONObject parsedHttpResponse = httpResponse.getBody().getObject();
+        if (parsedHttpResponse.getJSONObject("meta").getString("status").equals("200")) {
+            JSONArray searchResults = parsedHttpResponse.getJSONObject("response").getJSONArray("songs");
+            for (int i = 0; i < searchResults.length(); ++i) {
+                String apiPath = searchResults.getJSONObject(i).getString("api_path");
+                String fullTitle = searchResults.getJSONObject(i).getString("full_title");
+                String primaryArtistApiPath = searchResults.getJSONObject(i)
+                        .getJSONObject("primary_artist")
+                        .getString("api_path");
+                String lyricsPath = searchResults.getJSONObject(i).getString("path");
+                Song foundSong = new Song(apiPath, fullTitle, primaryArtistApiPath, lyricsPath);
+                foundArtistSongs.add(foundSong);
+            }
+        }
+        return new Response(foundArtistSongs);
+    }
+
+    public Response findArtists(String artistName) {
+        List<Artist> foundArtists = new ArrayList<>();
+        HttpResponse<JsonNode> httpResponse = Unirest.get("https://api.genius.com/search?q=" + artistName)
+                .header("Authorization","Bearer " + GENIUSTOKEN)
+                .asJson();
+        JSONObject parsedHttpResponse = httpResponse.getBody().getObject();
+        if (parsedHttpResponse.getJSONObject("meta").getString("status").equals("200")) {
+            JSONArray searchResults = parsedHttpResponse.getJSONObject("response").getJSONArray("hits");
+            for (int i = 0; i < searchResults.length(); ++i) {
+                artistName = searchResults.getJSONObject(i)
+                        .getJSONObject("result")
+                        .getJSONObject("primary_artist")
+                        .getString("name");
+                String artistId = searchResults.getJSONObject(i)
+                        .getJSONObject("result")
+                        .getJSONObject("primary_artist")
+                        .getString("id");
+                Artist foundArtist = new Artist(artistName, artistId);
+                if (!foundArtists.contains(foundArtist))
+                    foundArtists.add(foundArtist);
+            }
+        }
+        Response response = new Response();
+        response.setArtistList(foundArtists);
+        return response;
     }
 
     public Response findSongLyrics(String songId) {
