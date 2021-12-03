@@ -27,3 +27,4 @@ resources/config.properties
 oop.iml
 
 /.idea/
+/target/
