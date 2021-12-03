@@ -17,7 +17,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Safelist;
-import org.jsoup.select.Elements;
 
 public class BotLogic {
     private static final String GENIUSTOKEN = getGeniusToken();
@@ -172,25 +171,24 @@ public class BotLogic {
         if (parsedHttpResponse.getJSONObject("meta").getString("status").equals("200")) {
             String searchResult = parsedHttpResponse.getJSONObject("response").getJSONObject("song")
                     .getString("path");
-            try {
-                while (true){
-                    Document doc = Jsoup.connect("https://genius.com" + searchResult).get();
-                    Elements listLyrics = doc.select("div.song_body-lyrics").select("div.lyrics").select("p");
-                    for (Element element: listLyrics) {
-                        Safelist mySafelist = new Safelist();
-                        mySafelist.addTags("br");
-                        Cleaner cleaner = new Cleaner(mySafelist);
-                        Document dirty = Jsoup.parse(element.toString());
-                        Document clean = cleaner.clean(dirty);
-                        return new Response(clean.toString().replace("<html>", "")
-                            .replace("</html>", "").replace("<head>", "")
-                            .replace("</head>", "").replace("<body>", "")
-                            .replace("</body>", "").replace("<br>", "").trim());
-                    }
+            Document doc = new Document("https://genius.com" + searchResult);
+            if (!doc.toString().startsWith("<!doctype html>\n<html class=")){
+                while(!doc.toString().startsWith("<!doctype html>\n<html class=")) {
+                    try {
+                        doc = Jsoup.connect("https://genius.com" + searchResult).newRequest().get();
+                    } catch (IOException ignore) { }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+            Element lyrics = doc.selectFirst("div.song_body-lyrics").selectFirst("div.lyrics").selectFirst("p");
+            Safelist mySafelist = new Safelist();
+            mySafelist.addTags("br");
+            Cleaner cleaner = new Cleaner(mySafelist);
+            Document dirty = Jsoup.parse(lyrics.toString());
+            Document clean = cleaner.clean(dirty);
+            return new Response(clean.toString().replace("<html>", "")
+                    .replace("</html>", "").replace("<head>", "")
+                    .replace("</head>", "").replace("<body>", "")
+                    .replace("</body>", "").replace("<br>", "").trim());
         }
         return null;
     }
