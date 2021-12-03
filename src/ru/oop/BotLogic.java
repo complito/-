@@ -20,9 +20,9 @@ import org.jsoup.safety.Safelist;
 import org.jsoup.select.Elements;
 
 public class BotLogic {
-    String GENIUSTOKEN = getGeniusToken();
+    private static final String GENIUSTOKEN = getGeniusToken();
 
-    private String getGeniusToken() {
+    private static String getGeniusToken() {
         FileReader reader;
         Properties properties = new Properties();
         try {
@@ -37,6 +37,7 @@ public class BotLogic {
             return null;
         }
     }
+
     public Response requestHandler(String request) {
         if (request.equals("")) {
             return new Response("Ошибка: запрос пустой");
