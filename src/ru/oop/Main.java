@@ -7,14 +7,9 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 // t.me/GeniusSearchBot
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws TelegramApiException {
         System.out.println("Бот запущен \n");
-        try {
-            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(new BotIO());
-        }
-        catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+        botsApi.registerBot(new BotIO());
     }
 }
