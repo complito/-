@@ -70,7 +70,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>Main</mainClass>
+                            <mainClass>ru.oop.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
