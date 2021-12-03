@@ -1,1 +1,1 @@
-bot: java -jar target/oop-1.0-SNAPSHOT.jar
+bot: java -jar target/oop-1.0-SNAPSHOT-jar-with-dependencies.jar
