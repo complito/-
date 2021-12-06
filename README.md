@@ -5,11 +5,31 @@
 2. Перенести текущую логику в тг
 3. По выбранной песни из списка найденных песен по названию вывести её текст или информацию о ней (год, жанр, альбом и т. д.)
 
-### Running locally with maven (dont forget to setup environment vars/config.properties)
+# About
+Java-bot which works with Genius.com API <br />
+Use /help to detailed info about commands
+
+## Setting up
 ```sh
 $ git clone https://github.com/complito/oop.git
 $ cd oop
-$ mvn compile exec:java
+```
+You can either use resources/config.properties or environment variables
+1. For resources/config.properties <br />
+  Uncomment 16-29 lines of getBotToken() in src/ru/oop/BotIO.java and comment line 31 <br />
+  Uncomment 25-39 lines of getGeniusToken() in src/ru/oop/BotLogic.java and comment line 41 <br />
+  Go to resources/config.properties and set up your telegram bot token as botToken and your Genius token as geniusToken <br />
+2. For environment variables <br />
+  Just set up your telegram bot token as botToken and your Genius token as geniusToken
+
+### Running test with maven
+```sh
+$ mvn clean test
+```
+
+### Running locally with maven
+```sh
+$ mvn clean compile exec:java
 ```
 
 ### Deploying to Heroku
