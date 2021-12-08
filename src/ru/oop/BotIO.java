@@ -12,7 +12,7 @@ public class BotIO extends TelegramLongPollingBot {
     BotLogic botLogic = new BotLogic();
 
     @Override
-    public String getBotToken() {
+    public String getBotToken() throws ConfigPropertiesException {
         //use this for config.properties
         FileReader reader;
         Properties properties = new Properties();
@@ -24,8 +24,7 @@ public class BotIO extends TelegramLongPollingBot {
             return botToken;
         }
         catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            throw new ConfigPropertiesException("Ошибка: файл config.properties не найден");
         }
         // or this for environment vars
         //return System.getenv("botToken");

@@ -6,6 +6,7 @@ import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -31,7 +32,7 @@ public class BotLogic {
         handlers.put("/findsong", this::findSongs);
     }
 
-    private static String getGeniusToken() {
+    private static String getGeniusToken() throws ConfigPropertiesException {
         //use this for config.properties
         FileReader reader;
         Properties properties = new Properties();
@@ -43,8 +44,7 @@ public class BotLogic {
             return geniusToken;
         }
         catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            throw new ConfigPropertiesException("Ошибка: файл config.properties не найден");
         }
         // or this for environment vars
         //return System.getenv("geniusToken");
