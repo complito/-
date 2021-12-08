@@ -1,5 +1,4 @@
 package ru.oop;
-
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,8 +56,8 @@ public class BotLogicTest {
 
     @Test
     public void testFindSongLyrics() {
-        assertTrue(botLogic.requestHandler("/findsonglyrics 3039923").getResponseString().startsWith("[Intro]\n" +
-                "   Nobody pray for me"));
+        assertTrue(botLogic.requestHandler("/findsonglyrics 3039923").getResponseString().
+                replaceAll("\\s","").startsWith("[Intro]Nobodyprayforme"));
     }
 
     @Test
