@@ -13,7 +13,7 @@ public class BotIO extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        /* use this for config.properties
+        //use this for config.properties
         FileReader reader;
         Properties properties = new Properties();
         try {
@@ -26,9 +26,9 @@ public class BotIO extends TelegramLongPollingBot {
         catch (IOException e) {
             e.printStackTrace();
             return null;
-        }*/
+        }
         // or this for environment vars
-        return System.getenv("botToken");
+        //return System.getenv("botToken");
     }
 
     @Override

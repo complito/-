@@ -8,9 +8,8 @@ import kong.unirest.json.JSONObject;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.function.Function;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,9 +19,20 @@ import org.jsoup.safety.Safelist;
 
 public class BotLogic {
     private static final String GENIUSTOKEN = getGeniusToken();
+    private final Map<String, Function<String, Response>> handlers = new HashMap<>();
+
+    public BotLogic() {
+        handlers.put("/help", this::helpMessage);
+        handlers.put("/start", this::startMessage);
+        handlers.put("/findsonglyrics", this::findSongLyrics);
+        handlers.put("/findsonginfo", this::findSongInfo);
+        handlers.put("/findartists", this::findArtists);
+        handlers.put("/findartistsongs", this::findArtistSongs);
+        handlers.put("/findsong", this::findSongs);
+    }
 
     private static String getGeniusToken() {
-        /* use this for config.properties
+        //use this for config.properties
         FileReader reader;
         Properties properties = new Properties();
         try {
@@ -36,58 +46,33 @@ public class BotLogic {
             e.printStackTrace();
             return null;
         }
-        */
         // or this for environment vars
-        return System.getenv("geniusToken");
+        //return System.getenv("geniusToken");
     }
 
     public Response requestHandler(String request) {
-        if (request.equals("")) {
-            return new Response("Ошибка: запрос пустой");
-        } else if (request.equals("/help")) {
-            return helpMessage();
-        } else if (request.equals("/start")) {
-            return startMessage();
-        } else if (request.length() > 16 && request.startsWith("/findsonglyrics")) {
-            return findSongLyrics(request.substring(16));
-        } else if (request.length() > 14 && request.startsWith("/findsonginfo")) {
-            return findSongInfo(request.substring(14));
-        } else if (request.length() > 13 && request.startsWith("/findartists ")) {
-            List<Artist> artists = findArtists(request.substring(13)).getArtistList();
-            if (artists.isEmpty()) {
-                return new Response("По введённому запросу не было найдено артистов");
-            } else {
-                Response resp = new Response();
-                resp.setArtistList(artists);
-                resp.artistListToStr();
-                return resp;
-            }
-        } else if ((request.length() > 10 && request.startsWith("/findsong ")) ||
-                (request.length() > 17 && request.startsWith("/findartistsongs"))) {
-            List<Song> songs;
-            if (request.startsWith("/findsong "))
-                songs = findSongs(request.substring(10)).getSongList();
-            else songs = findArtistSongs(request.substring(17)).getSongList();
-            if (songs.isEmpty()) {
-                return new Response("По введённому запросу не было найдено песен");
-            } else {
-                Response resp = new Response(songs);
-                resp.songListToStr();
-                return resp;
-            }
+        int indexOfSpace = request.indexOf(" ");
+        String command;
+        if (indexOfSpace == -1) {
+            command = request;
+            request = "";
         } else {
-            return new Response("Ошибка: неизвестный запрос");
+            command = request.substring(0, indexOfSpace);
+            request = request.substring(indexOfSpace + 1);
         }
+        if (handlers.containsKey(command))
+            return handlers.get(command).apply(request);
+        else return new Response("Ошибка: неизвестный запрос");
     }
 
-    public Response startMessage() {
+    public Response startMessage(String str) {
         return new Response("""
                 Привет, я бот который умеет находить песню по отрывку ее текста. Если нужна помощь, напиши /help
                 Введите запрос:\s
                 """);
     }
 
-    public Response helpMessage() {
+    public Response helpMessage(String str) {
         return new Response("""
                 /findsong ТЕКСТ - Поиск песни по отрывку текста
                 /findsonglyrics НОМЕР - Поиск текста песни по её номеру
@@ -115,7 +100,13 @@ public class BotLogic {
                 foundSongs.add(foundSong);
             }
         }
-        return new Response(foundSongs);
+        if (foundSongs.isEmpty())
+            return new Response("По введённому запросу не было найдено песен");
+        else {
+            Response response = new Response(foundSongs);
+            response.songListToStr();
+            return response;
+        }
     }
 
     public Response findArtistSongs(String artistId) {
@@ -138,7 +129,13 @@ public class BotLogic {
                 foundArtistSongs.add(foundSong);
             }
         }
-        return new Response(foundArtistSongs);
+        if (foundArtistSongs.isEmpty())
+            return new Response("По введённому запросу не было найдено песен");
+        else {
+            Response response = new Response(foundArtistSongs);
+            response.songListToStr();
+            return response;
+        }
     }
 
     public Response findArtists(String artistName) {
@@ -163,9 +160,14 @@ public class BotLogic {
                     foundArtists.add(foundArtist);
             }
         }
-        Response response = new Response();
-        response.setArtistList(foundArtists);
-        return response;
+        if (foundArtists.isEmpty())
+            return new Response("По введённому запросу не было найдено артистов");
+        else {
+            Response response = new Response();
+            response.setArtistList(foundArtists);
+            response.artistListToStr();
+            return response;
+        }
     }
 
     public Response findSongLyrics(String songId) {
@@ -196,6 +198,7 @@ public class BotLogic {
         }
         return null;
     }
+
     public Response findSongInfo(String songId) {
         HttpResponse<JsonNode> httpResponse = Unirest.get("https://api.genius.com/songs/" + songId)
                 .header("Authorization","Bearer " + GENIUSTOKEN).asJson();

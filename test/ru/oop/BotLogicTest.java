@@ -17,7 +17,7 @@ public class BotLogicTest {
     }
     @Test
     public void testEmptyRequest() {
-        assertEquals(botLogic.requestHandler("").getResponseString(), "Ошибка: запрос пустой");
+        assertEquals(botLogic.requestHandler("").getResponseString(), "Ошибка: неизвестный запрос");
     }
 
     @Test
