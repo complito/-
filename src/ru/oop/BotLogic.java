@@ -13,9 +13,9 @@ import java.util.function.Function;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Safelist;
+import org.jsoup.select.Elements;
 
 public class BotLogic {
     private static final String GENIUSTOKEN = getGeniusToken();
@@ -177,15 +177,11 @@ public class BotLogic {
         if (parsedHttpResponse.getJSONObject("meta").getString("status").equals("200")) {
             String searchResult = parsedHttpResponse.getJSONObject("response").getJSONObject("song")
                     .getString("path");
-            Document doc = new Document("https://genius.com" + searchResult);
-            if (!doc.toString().startsWith("<!doctype html>\n<html class=")){
-                while(!doc.toString().startsWith("<!doctype html>\n<html class=")) {
-                    try {
-                        doc = Jsoup.connect("https://genius.com" + searchResult).newRequest().get();
-                    } catch (IOException ignore) { }
-                }
-            }
-            Element lyrics = doc.selectFirst("div.song_body-lyrics").selectFirst("div.lyrics").selectFirst("p");
+            Document doc = null;
+            try {
+                doc = Jsoup.connect("https://genius.com" + searchResult).get();
+            } catch (IOException ignore) { }
+            Elements lyrics = doc.select("div[data-lyrics-container]");
             Safelist mySafelist = new Safelist();
             mySafelist.addTags("br");
             Cleaner cleaner = new Cleaner(mySafelist);
