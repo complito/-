@@ -17,8 +17,8 @@ $ cd oop
 ```
 You can either use resources/config.properties or environment variables
 1. For resources/config.properties <br />
-  Uncomment 16-29 lines of getBotToken() in src/ru/oop/BotIO.java and comment line 31 <br />
-  Uncomment 25-39 lines of getGeniusToken() in src/ru/oop/BotLogic.java and comment line 41 <br />
+  Uncomment 17-28 lines of getBotToken() in src/ru/oop/BotIO.java and comment line 30 <br />
+  Uncomment 37-48 lines of getGeniusToken() in src/ru/oop/BotLogic.java and comment line 50 <br />
   Go to resources/config.properties and set up your telegram bot token as botToken and your Genius token as geniusToken <br />
 2. For environment variables <br />
   Just set up your telegram bot token as botToken and your Genius token as geniusToken
